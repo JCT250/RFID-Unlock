@@ -47,7 +47,7 @@ void loop() {
     Read_UUID[i] = mfrc522.uid.uidByte[i];
   }
 
-  if(Read_UUID[0] == card1[0] && Read_UUID[1] == card1[1] && Read_UUID[2] == card1[2] && Read_UUID[3] == card1[3] && Read_UUID[4] == card1[4] && Read_UUID[5] == card1[5] && Read_UUID[6] == card1[6] && Read_UUID[7] == card1[7]) Serial.println("Authenticated");
+  if(Read_UUID[0] == card1[0] && Read_UUID[1] == card1[1] && Read_UUID[2] == card1[2] && Read_UUID[3] == card1[3] && Read_UUID[4] == card1[4] && Read_UUID[5] == card1[5] && Read_UUID[6] == card1[6] && Read_UUID[7] == card1[7]) Serial.println("Authenticated - Card 1");
   
   else Serial.println("Not Authenticated");
   
