@@ -29,6 +29,8 @@ byte card7ID[] = {0x2F, 0x0F, 0xFF, 0xFC, 0x08, 0xAA, 0x2D, 0x0F, 0x66, 0x2B, 0x
 byte card8ID[] = {0x83, 0x29, 0x33, 0x4F, 0x26, 0x14, 0x3A, 0x03, 0x5D, 0xFC, 0xBB, 0xFC, 0x1C, 0xF9, 0x52, 0xA6  }; // Card 8
 byte card9ID[] = {0x63, 0x3C, 0x6D, 0x4C, 0x58, 0x91, 0x80, 0x14, 0x7F, 0x1C, 0x98, 0x83, 0x5C, 0xC5, 0x0F, 0x90  }; // Card 9
 byte card10ID[] = {0xCE, 0xF0, 0xA0, 0xC9, 0x72, 0x41, 0x14, 0x75, 0xBB, 0xD2, 0x74, 0x89, 0x68, 0x20, 0xB4, 0xF6  }; // Card 10
+
+byte pricing_struct[11] = {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}; //number of credits needed for one coin insert
   
 int check1 = 0; // first check that we perform on the card
 int check2 = 0; // second check that we perform on the card
@@ -256,8 +258,8 @@ if(check1 == check2) { // If we have a valid card then read the value of the cre
     }
     
     if(player1_in == LOW) { // If the player one button is depressed
-      if(current_credits[0] >= 1) {
-        current_credits[0] --; // deduct one credit
+      if(current_credits[0] >= pricing_struct[check1]) {
+        current_credits[0] = current_credits[0] - pricing_struct[check1]; // deduct x credits depending on pricing structure
         
         Serial.println("Deducting Credit - P1");
         status = mfrc522.MIFARE_Write(valueBlockB, current_credits, 16); //update the card
@@ -272,8 +274,8 @@ if(check1 == check2) { // If we have a valid card then read the value of the cre
     }
     
     if(player2_in == LOW) { // if the player 2 button is depressed
-      if(current_credits[0] >= 1) {
-        current_credits[0] --; // deduct one credit
+      if(current_credits[0] >= pricing_struct[check1]) {
+        current_credits[0] = current_credits[0] - pricing_struct[check1]; // deduct x credits depending on pricing structure
         
         Serial.println("Deducting Credit - P2");
         status = mfrc522.MIFARE_Write(valueBlockB, current_credits, 16); //update the card
