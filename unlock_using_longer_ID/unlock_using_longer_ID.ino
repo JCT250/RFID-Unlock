@@ -30,7 +30,7 @@ byte card8ID[] = {0x83, 0x29, 0x33, 0x4F, 0x26, 0x14, 0x3A, 0x03, 0x5D, 0xFC, 0x
 byte card9ID[] = {0x63, 0x3C, 0x6D, 0x4C, 0x58, 0x91, 0x80, 0x14, 0x7F, 0x1C, 0x98, 0x83, 0x5C, 0xC5, 0x0F, 0x90  }; // Card 9
 byte card10ID[] = {0xCE, 0xF0, 0xA0, 0xC9, 0x72, 0x41, 0x14, 0x75, 0xBB, 0xD2, 0x74, 0x89, 0x68, 0x20, 0xB4, 0xF6  }; // Card 10
 
-byte pricing_struct[11] = {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}; //number of credits needed for one coin insert
+byte pricing_struct[11] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}; //number of credits needed for one coin insert
   
 int check1 = 0; // first check that we perform on the card
 int check2 = 0; // second check that we perform on the card
@@ -147,7 +147,7 @@ void loop() {
   Serial.println("Authenticated");
   
   if(1==0){
-    // Writing new value block 4 Use this to save idnetity code onto key
+    // Writing new value block 4 Use this to save identity code onto key
     Serial.println("Writing new value Block 4 : the first of the sector ONE");
     // uncomment to write matching code to key
     //byte value1Block[] = {0xE9, 0x5E, 0xFE, 0xE4, 0x90, 0xFC, 0x8D, 0xCD, 0x88, 0x9C, 0xE3, 0x34, 0x09, 0x2B, 0xD8, 0x3B  }; // Card 1
@@ -182,14 +182,14 @@ void loop() {
     Serial.print("Card ID: ");
     
     for (int i=0; i<18; i++) {
-      Serial.print(buffer[i]);
+      Serial.print(buffer[i], HEX);
       Serial.print(" "); 
     }
     Serial.println();
   }
 
 
-if (UIDcmp(mfrc522.uid.uidByte, card1UID) == true) check1 = 1;
+if (UIDcmp(mfrc522.uid.uidByte, card1UID) == true) check1 = 1; // check the UID against the ones hard coded to see if we have a valid card
 if (UIDcmp(mfrc522.uid.uidByte, card2UID) == true) check1 = 2;
 if (UIDcmp(mfrc522.uid.uidByte, card3UID) == true) check1 = 3;
 if (UIDcmp(mfrc522.uid.uidByte, card4UID) == true) check1 = 4;
@@ -203,7 +203,7 @@ if (UIDcmp(mfrc522.uid.uidByte, card10UID) == true) check1 = 10;
 Serial.print("ID as Card: ");
 Serial.println(check1);
 
-if (IDcmp(buffer, card1ID) == true) check2 = 1;
+if (IDcmp(buffer, card1ID) == true) check2 = 1; // check the info we pulled off the card for further verification
 if (IDcmp(buffer, card2ID) == true) check2 = 2;
 if (IDcmp(buffer, card3ID) == true) check2 = 3;
 if (IDcmp(buffer, card4ID) == true) check2 = 4;
@@ -214,7 +214,7 @@ if (IDcmp(buffer, card8ID) == true) check2 = 8;
 if (IDcmp(buffer, card9ID) == true) check2 = 9;
 if (IDcmp(buffer, card10ID) == true) check2 = 10;
 
-if(check1 == check2) { // Check that both the card numbers match the same card
+if(check1 == check2) { // Check that both the card numbers match the same card and that they are valiv
   Serial.print("Confirm as Card: ");
   Serial.println(check2);
 }
@@ -222,9 +222,11 @@ else{
   Serial.println("Card Invalid");
 }
 
-if(check1 == 1) {
+if(check1 == 1) { // if the master card has been scanned then enter into override mode (button states are passed through)
   if(check2 == 1) {
      override = !override;
+     Serial.print("Override = ");
+     Serial.println(override);
   }
 }
 
@@ -236,7 +238,7 @@ if(check1 == check2) { // If we have a valid card then read the value of the cre
       Serial.println(mfrc522.GetStatusCodeName(status));
     }
     Serial.print("Available Credits: "); // write the available credits to the serial port
-    Serial.println(current_credits[0]);
+    Serial.println(current_credits[0]); // we currently only use the information in the first position of the array
     
     if(credit_value!= 254) { // if we have received via bluetooth an updated credit value
       current_credits[0] = credit_value; // then update the appropriate position in the current_credits array
